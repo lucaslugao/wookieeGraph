@@ -21,31 +21,37 @@ public class Crawler implements Runnable {
 
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
+            //System.out.println("Thread \"" + Thread.currentThread().getName() + "\" waiting for new url");
             String url = doubleBlockingQueue.getFromOrigin();
             if (Thread.currentThread().isInterrupted())
                 break;
+            //System.out.println("Thread \"" + Thread.currentThread().getName() + "\" processing url \"" + url + "\"");
             ArrayList<String> newLinks = new ArrayList<String>();
             String formatedName = "";
             Boolean isCharacter = false;
             try {
-                Document doc = Jsoup.connect("http://starwars.wikia.com/wiki/" + url).get();
-                isCharacter = doc.select("#mw-content-text > aside").hasClass("pi-theme-character");
-                if (isCharacter) {
-                    formatedName = doc.select("#WikiaPageHeader > div.header-container > div.header-column.header-title > h1").text();
-                    Elements links = doc.select("#mw-content-text a");
-                    for (Element link : links) {
-                        String href = link.attr("href");
-                        if (href.contains("/wiki/") && href.charAt(0) == '/')
-                            newLinks.add(href.split("\\?")[0]);
+                Document doc = Jsoup.connect("http://starwars.wikia.com" + url).get();
+                if(doc.select("#mw-content-text > aside").size() != 0) {
+                    isCharacter = doc.select("#mw-content-text > aside").hasClass("pi-theme-character");
+                    if (isCharacter) {
+                        formatedName = doc.select("#WikiaPageHeader > div.header-container > div.header-column.header-title > h1").text();
+                        Elements links = doc.select("#mw-content-text a");
+
+                        for (Element link : links) {
+                            String href = link.attr("href");
+                            if (href.contains("/wiki/") && !href.contains("/wiki/File:") && !href.contains("/Legends") && href.charAt(0) == '/') {
+                                newLinks.add(href.split("\\?")[0]);
+                            }
+                        }
                     }
                 }
             } catch (Exception e) {
                 doubleBlockingQueue.putInOrigin(url);
             }
-            if (isCharacter)
+            if (isCharacter) {
                 doubleBlockingQueue.putInSolution(formatedName);
+            }
             doubleBlockingQueue.putInDestiny(newLinks);
-            break;
         }
     }
 }

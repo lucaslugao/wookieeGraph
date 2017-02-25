@@ -22,7 +22,11 @@ public class wookieeGraph {
         String outputFile = args[2];
 
         Manager manager = new Manager(origin, depth, 10 );
+        long startTime = System.nanoTime();
         manager.crawl();
+        long estimatedTime = System.nanoTime() - startTime;
+
+        System.out.format("Elapsed time = %f seconds%n", estimatedTime/1000000000.0);
         try {
             manager.writeSolutionToFile(outputFile);
         } catch (IOException e) {

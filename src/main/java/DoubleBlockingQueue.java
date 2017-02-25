@@ -2,8 +2,6 @@
  * Created by Paulo on 2/24/2017.
  */
 
-import com.sun.deploy.util.BlackList;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
@@ -11,15 +9,15 @@ import java.util.concurrent.locks.*;
 
 public class DoubleBlockingQueue {
 
-    private ArrayList <String> partialSolution;
-    private ArrayList <String> origin;
-    private ArrayList <String> destiny;
+    private ArrayList<String> partialSolution;
+    private ArrayList<String> origin;
+    private ArrayList<String> destiny;
 
     private int currentWorkers;
 
-    private Lock originLock ;
-    private Lock destinyLock ;
-    private Lock solutionLock ;
+    private Lock originLock;
+    private Lock destinyLock;
+    private Lock solutionLock;
 
     private Condition notEmpty; // The origin is empty, the threads must wait until the manager swaps
     private Condition stepOver; // The step is not over yet, the manager must wait
@@ -33,8 +31,8 @@ public class DoubleBlockingQueue {
 
         this.currentWorkers = 0;//this.headOrigin = this.headDestiny = 0; // head at zero means that there is no element at the queue
 
-        this.originLock = new ReentrantLock ();
-        this.destinyLock = new ReentrantLock ();
+        this.originLock = new ReentrantLock();
+        this.destinyLock = new ReentrantLock();
         this.solutionLock = new ReentrantLock();
 
         this.notEmpty = originLock.newCondition();
@@ -43,12 +41,11 @@ public class DoubleBlockingQueue {
         this.blackList = new HashSet<String>();
     }
 
-    public void putInSolution (String s) {
+    public void putInSolution(String s) {
         solutionLock.lock();
         try {
             partialSolution.add(s);
-        }
-        finally {
+        } finally {
             solutionLock.unlock();
         }
     }
@@ -58,28 +55,29 @@ public class DoubleBlockingQueue {
         try {
             while (origin.size() == 0) // If the origin queue is empty, the threads trying to get links are set to sleep
                 notEmpty.awaitUninterruptibly();
-
             currentWorkers++;
-            int head = origin.size() - 1;
-            String link = origin.remove(head);
-            return link;
-        }
-        finally {
+            return origin.remove(origin.size() - 1);
+        } finally {
             originLock.unlock();
         }
     }
 
-    public void putInOrigin (String s) {
+    public void putInOrigin(String s) {
         originLock.lock();
+        destinyLock.lock();
         try {
-            origin.add(s);
-        }
-        finally {
+            if (!blackList.contains(s)) {
+                blackList.add(s);
+                origin.add(s);
+            }
+            notEmpty.signalAll();
+        } finally {
             originLock.unlock();
+            destinyLock.unlock();
         }
     }
 
-    public void putInDestiny(List<String> list){
+    public void putInDestiny(List<String> list) {
         destinyLock.lock();
         try {
             for (String s : list) {
@@ -94,59 +92,65 @@ public class DoubleBlockingQueue {
                 if (currentWorkers == 0 && origin.size() == 0) { // We don`t need a lock to read the headOrigin, even though it is modified at getFromOrigin,
                     stepOver.signal();                        // because once headOrigin is zero it c
                 }
-            }
-            finally {
+            } finally {
                 originLock.unlock();
             }
-        }
-        finally {
+        } finally {
             destinyLock.unlock();
         }
     }
 
-    public List<String> swapDrain() {
+    public ArrayList<String> swapAndDrain() {
         originLock.lock();
-        destinyLock.lock();
         try {
-            while (origin.size() > 0 && currentWorkers > 0) {// If the origin queue is not empty, the step is not over
+            while (origin.size() > 0 || currentWorkers > 0) {// If the origin queue is not empty, the step is not over
                 stepOver.awaitUninterruptibly();
             }
 
-            // Swaping Queues
-            this.origin = destiny;
-            this.destiny = new ArrayList<String>();
+            destinyLock.lock();
+            try {
+                // Swaping Queues
+                this.origin = destiny;
+                this.destiny = new ArrayList<String>();
 
-            // Sending Signal
-            notEmpty.signalAll();
+                // Sending Signal
+                notEmpty.signalAll();
 
-            // Returning partial solution
-            ArrayList<String> auxList = new ArrayList<String>(partialSolution);
-            partialSolution = new ArrayList<String>();
-            return auxList;
+                // Returning partial solution
+                ArrayList<String> auxList = new ArrayList<String>(partialSolution);
+                partialSolution = new ArrayList<String>();
+                return auxList;
+            } finally {
+                destinyLock.unlock();
+            }
 
-        }
-        finally {
+        } finally {
             originLock.unlock();
-            destinyLock.unlock();
         }
     }
 
-    public void printStatus () {
+    public void printStatus() {
         System.out.println("***   ***   ***   ***   ***   ***   ***   ***   ***");
         System.out.println("OriginSize: " + origin.size() + "; DestinyOrigin: " + destiny.size() + "; CurrentWorkers: " + currentWorkers);
 
         System.out.println("BlackList: ");
-        for (String s : blackList)  {
+        for (String s : blackList) {
             System.out.println(s);
         }
 
     }
 
-    public void signAll () {
-        notEmpty.signalAll();
+    public void signalAll() {
+        originLock.lock();
+        try {
+            notEmpty.signalAll();
+        }
+        finally {
+            originLock.unlock();
+        }
     }
 
-    public static void main (String[] args) {
+    public static void main(String[] args) {
         DoubleBlockingQueue testQueue = new DoubleBlockingQueue();
 
         testQueue.putInOrigin("Yoda1");
@@ -154,16 +158,16 @@ public class DoubleBlockingQueue {
         testQueue.putInOrigin("Yoda3");
         testQueue.putInOrigin("Yoda4");
 
-        testQueue.printStatus ();
+        testQueue.printStatus();
 
         String s1 = testQueue.getFromOrigin();
         String s2 = testQueue.getFromOrigin();
         String s3 = testQueue.getFromOrigin();
         String s4 = testQueue.getFromOrigin();
 
-        testQueue.printStatus ();
+        testQueue.printStatus();
 
-        ArrayList<String> input = new ArrayList<String> ();
+        ArrayList<String> input = new ArrayList<String>();
         input.add("Yoda1");
         testQueue.putInDestiny(input);
 
@@ -177,6 +181,6 @@ public class DoubleBlockingQueue {
         testQueue.putInDestiny(input);
         //Thread robot1 = new Thread();
 
-        testQueue.printStatus ();
+        testQueue.printStatus();
     }
 }
