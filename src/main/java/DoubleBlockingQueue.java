@@ -29,7 +29,7 @@ public class DoubleBlockingQueue {
         this.destiny = new ArrayList<String>();
         this.partialSolution = new ArrayList<String>();
 
-        this.currentWorkers = 0;//this.headOrigin = this.headDestiny = 0; // head at zero means that there is no element at the queue
+        this.currentWorkers = 0;
 
         this.originLock = new ReentrantLock();
         this.destinyLock = new ReentrantLock();
@@ -66,11 +66,14 @@ public class DoubleBlockingQueue {
         originLock.lock();
         destinyLock.lock();
         try {
-            if (!blackList.contains(s)) {
+            //origin.add(s); // we always put the String s in the origin if this method is called, because it should be processed at this same step
+            boolean emptyBefore = (origin.size() == 0);
+            if (! blackList.contains(s)) {
                 blackList.add(s);
                 origin.add(s);
+                if (emptyBefore) notEmpty.signalAll();
             }
-            notEmpty.signalAll();
+            //notEmpty.signalAll();
         } finally {
             originLock.unlock();
             destinyLock.unlock();
@@ -86,11 +89,12 @@ public class DoubleBlockingQueue {
                     destiny.add(s);
                 }
             }
-            currentWorkers--;
+            //currentWorkers--;
             originLock.lock();
+            currentWorkers--; // inside originLock, otherwise it's not safe, because the method getFromOrigin also write over this variable
             try {
-                if (currentWorkers == 0 && origin.size() == 0) { // We don`t need a lock to read the headOrigin, even though it is modified at getFromOrigin,
-                    stepOver.signal();                        // because once headOrigin is zero it c
+                if (currentWorkers == 0 && origin.size() == 0) {
+                    stepOver.signal();
                 }
             } finally {
                 originLock.unlock();
@@ -179,7 +183,6 @@ public class DoubleBlockingQueue {
 
         input.add("Yoda4");
         testQueue.putInDestiny(input);
-        //Thread robot1 = new Thread();
 
         testQueue.printStatus();
     }

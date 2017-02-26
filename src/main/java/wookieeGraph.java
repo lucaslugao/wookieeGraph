@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class wookieeGraph {
     public static void main(String[] args){
         if(args.length != 3){
-            System.err.println("Three parameter expected.");
+            System.err.println("Three parameters expected.");
         }
         String origin = args[0];
         Integer depth = 0;
