@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by Lucas on 2/24/2017.
@@ -21,14 +20,14 @@ public class wookieeGraph {
 
         String outputFile = args[2];
 
-        Manager manager = new Manager(origin, depth, 10 );
+        BFSManager slowManager = new FastManager(origin, depth, 20,"charNames.csv" );
         long startTime = System.nanoTime();
-        manager.crawl();
+        slowManager.crawl();
         long estimatedTime = System.nanoTime() - startTime;
 
         System.out.format("Elapsed time = %f seconds%n", estimatedTime/1000000000.0);
         try {
-            manager.writeSolutionToFile(outputFile);
+            slowManager.writeSolutionToFile(outputFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
