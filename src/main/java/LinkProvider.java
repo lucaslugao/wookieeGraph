@@ -145,37 +145,4 @@ public class LinkProvider {
             originLock.unlock();
         }
     }
-
-    public static void main(String[] args) {
-        LinkProvider testQueue = new LinkProvider(1);
-
-        testQueue.putInOrigin("Yoda1");
-        testQueue.putInOrigin("Yoda2");
-        testQueue.putInOrigin("Yoda3");
-        testQueue.putInOrigin("Yoda4");
-
-        testQueue.printStatus();
-
-        String s1 = testQueue.getFromOrigin();
-        String s2 = testQueue.getFromOrigin();
-        String s3 = testQueue.getFromOrigin();
-        String s4 = testQueue.getFromOrigin();
-
-        testQueue.printStatus();
-
-        ArrayList<String> input = new ArrayList<>();
-        input.add("Yoda1");
-        testQueue.putInDestiny(input);
-
-        input.add("Yoda2");
-        testQueue.putInDestiny(input);
-
-        input.add("Yoda3");
-        testQueue.putInDestiny(input);
-
-        input.add("Yoda4");
-        testQueue.putInDestiny(input);
-
-        testQueue.printStatus();
-    }
 }
