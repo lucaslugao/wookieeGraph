@@ -20,7 +20,7 @@ public class wookieeGraph {
 
         String outputFile = args[2];
 
-        BFSManager slowManager = new FastManager(origin, depth, 20,"charNames.csv" );
+        BFSManager slowManager = new Manager(origin, depth, 20,"charNames.csv" );
         long startTime = System.nanoTime();
         slowManager.crawl();
         long estimatedTime = System.nanoTime() - startTime;

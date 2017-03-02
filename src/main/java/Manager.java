@@ -2,7 +2,6 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -15,19 +14,19 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Lucas on 2/24/2017.
  */
-public class FastManager implements BFSManager {
+public class Manager implements BFSManager {
     private final Set<String> characterNames;
-    private final DoubleBlockingQueue doubleBlockingQueue;
+    private final LinkProvider linkProvider;
     private final StringBuilder solutionLines;
     private final int maxDepth;
     private final int poolSize;
 
-    public FastManager(String graphOrigin, int depth, int poolSize, String charNamesPath) {
+    public Manager(String graphOrigin, int depth, int poolSize, String charNamesPath) {
         this.solutionLines = new StringBuilder();
-        this.doubleBlockingQueue = new DoubleBlockingQueue(poolSize);
+        this.linkProvider = new LinkProvider(poolSize);
         this.maxDepth = depth;
         this.poolSize = poolSize;
-        this.doubleBlockingQueue.putInOrigin(graphOrigin);
+        this.linkProvider.putInOrigin(graphOrigin);
         this.characterNames = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
         try {
             for (String line : Files.readAllLines(Paths.get(charNamesPath), StandardCharsets.UTF_8)) {
@@ -45,9 +44,9 @@ public class FastManager implements BFSManager {
             @Override
             public void run() {
                 while (!Thread.currentThread().isInterrupted()) {
-                    doubleBlockingQueue.printStatus();
+                    linkProvider.printStatus();
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         break;
                     }
@@ -57,24 +56,24 @@ public class FastManager implements BFSManager {
         reporter.start();
 
         for (int i = 0; i < poolSize; i++) {
-            threads[i] = new Thread(new FastCrawler(doubleBlockingQueue, characterNames), "FastCrawler #" + Integer.toString(i));
+            threads[i] = new Thread(new Crawler(linkProvider, characterNames), "Crawler #" + Integer.toString(i));
             threads[i].start();
         }
 
-        for (int depth = 0; depth < maxDepth; depth++) {
+
+        for (int depth = 1; depth <= maxDepth; depth++) {
             System.out.println("Depth = " + Integer.toString(depth));
-            ArrayList<String> partialSolution = doubleBlockingQueue.swapAndDrain(false);
+            ArrayList<String> partialSolution = linkProvider.swapAndDrain();
             appendToSolution(partialSolution, depth);
         }
 
-        for (int i = 0; i < poolSize; i++)
-            threads[i].interrupt();
+//        for (int i = 0; i < poolSize; i++)
+//            threads[i].interrupt();
 
-
-        //doubleBlockingQueue.signalAll();
+        linkProvider.Stop();
         System.out.println("Join");
-        ArrayList<String> partialSolution = doubleBlockingQueue.swapAndDrain(true);
-        appendToSolution(partialSolution, maxDepth);
+        //ArrayList<String> partialSolution = linkProvider.swapAndDrain();
+        //appendToSolution(partialSolution, maxDepth);
         for (int i = 0; i < poolSize; i++) {
             try {
                 threads[i].join();
