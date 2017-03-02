@@ -20,14 +20,14 @@ public class wookieeGraph {
 
         String outputFile = args[2];
 
-        BFSManager slowManager = new Manager(origin, depth, 20,"charNames.csv" );
+        BFSManager manager = new Manager(origin, depth, 100, CharacterNamesProvider.fromWiki() ); //.fromFile("charNames.csv"));//
         long startTime = System.nanoTime();
-        slowManager.crawl();
+        manager.Crawl();
         long estimatedTime = System.nanoTime() - startTime;
 
         System.out.format("Elapsed time = %f seconds%n", estimatedTime/1000000000.0);
         try {
-            slowManager.writeSolutionToFile(outputFile);
+            manager.writeSolutionToFile(outputFile);
         } catch (IOException e) {
             e.printStackTrace();
         }

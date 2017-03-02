@@ -15,13 +15,13 @@ public class LinkProvider {
     private int waitingWorkers;
     private final int nThreads;
 
-    private Lock originLock;
-    private Lock destinyLock;
+    private final Lock originLock;
+    private final Lock destinyLock;
 
-    private Condition notEmpty; // The origin is empty, the threads must wait until the manager swaps
-    private Condition stepOver; // The step is not over yet, the manager must wait
+    private final Condition notEmpty; // The origin is empty, the threads must wait until the manager swaps
+    private final Condition stepOver; // The step is not over yet, the manager must wait
 
-    private HashSet<String> blackList;
+    private final HashSet<String> visited;
 
     private boolean isStopped = false;
 
@@ -38,7 +38,7 @@ public class LinkProvider {
         this.notEmpty = originLock.newCondition();
         this.stepOver = originLock.newCondition();
 
-        this.blackList = new HashSet<>();
+        this.visited = new HashSet<>();
     }
 
     public String getFromOrigin() {
@@ -81,8 +81,8 @@ public class LinkProvider {
         try {
             boolean emptyBefore = (origin.size() == 0);
 
-            if (!blackList.contains(s)) {
-                blackList.add(s);
+            if (!visited.contains(s)) {
+                visited.add(s);
                 origin.add(s);
                 if (emptyBefore) notEmpty.signalAll();
             }
@@ -97,8 +97,8 @@ public class LinkProvider {
         destinyLock.lock();
         try {
             for (String s : list) {
-                if (!blackList.contains(s)) { // We just add new items to the destiny queue
-                    blackList.add(s);
+                if (!visited.contains(s)) { // We just add new items to the destiny queue
+                    visited.add(s);
                     destiny.add(s);
                 }
             }
@@ -123,8 +123,7 @@ public class LinkProvider {
                 notEmpty.signalAll();
 
                 // Returning partial solution
-                ArrayList<String> auxList = new ArrayList<>(origin);
-                return auxList;
+                return new ArrayList<>(origin);
 
             } finally {
                 destinyLock.unlock();
@@ -139,25 +138,10 @@ public class LinkProvider {
         originLock.lock();
         destinyLock.lock();
         try {
-            System.out.printf("OriginSize: %6d; DestinySize: %6d; WaitingWorkers: %3d; BlackList: %6d\n", origin.size(), destiny.size(), waitingWorkers, blackList.size());
+            System.out.printf("OriginSize: %6d | DestinySize: %6d | WaitingWorkers: %3d | PagesVisited: %6d\n", origin.size(), destiny.size(), waitingWorkers, visited.size());
         }
         finally {
             destinyLock.unlock();
-            originLock.unlock();
-        }
-//        System.out.println("BlackList: ");
-//        for (String s : blackList) {
-//            System.out.println(s);
-//        }
-        //System.out.println("BlackList: " + blackList.size());
-
-    }
-
-    public void signalAll() {
-        originLock.lock();
-        try {
-            notEmpty.signalAll();
-        } finally {
             originLock.unlock();
         }
     }

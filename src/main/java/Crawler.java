@@ -16,35 +16,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Set;
 
-/*
-def getLinks(pageName):
-    global visited
-    plcontinue = ''
-    linkNames = []
-
-    #start = time.clock()
-    while(True):
-        r = requests.get('http://starwars.wikia.com/api.php?action=query&format=json&prop=links'+plcontinue+'&pllimit=500&titles=' + quote(pageName.strip())).json()
-        linksObj = list(r['query']['pages'].values())[0]['links']
-        linksObj = [x['title'].replace('/Canon','').strip() for x in linksObj]
-        linkNames = linkNames + [x for x in linksObj if
-                                 'Template:Character' not in x and
-                                 'File:' not in x and
-                                 'Wookieepedia:' not in x and
-                                 'Category:' not in x and
-                                 '/Legends' not in x and
-                                 '(episode)' not in x and
-                                 x not in visited]
-        for x in linkNames:
-            visited.add(x)
-        if('query-continue' in r.keys()):
-            plcontinue = '&plcontinue='+ r['query-continue']['links']['plcontinue']
-        else:
-            break
-    #print("getLinks took %f seconds" % (time.clock()-start))
-    return linkNames
-
- */
 public class Crawler implements Runnable {
     private final Set<String> characterNames;
     private final LinkProvider linkProvider;
@@ -57,9 +28,8 @@ public class Crawler implements Runnable {
     public void run() {
         while (true) {
             String url = linkProvider.getFromOrigin();
-            if (url == null) {
+            if (url == null)
                 break;
-            }
             else {
                 ArrayList<String> newLinks = new ArrayList<>();
 
@@ -69,7 +39,6 @@ public class Crawler implements Runnable {
                     boolean restartParse = false;
                     try {
                         String getURL = "http://starwars.wikia.com/api.php?action=query&format=json&prop=links" + plcontinue + "&pllimit=500&titles=" + URLEncoder.encode(url, "UTF-8");
-                        //System.out.println(getURL);
                         HttpResponse res = Request.Get(getURL)
                                 .connectTimeout(1000)
                                 .socketTimeout(1000)
@@ -111,12 +80,8 @@ public class Crawler implements Runnable {
                 if (maxRetry == 0) {
                     linkProvider.putInOrigin(url);
                 } else {
-//                System.out.printf("Found %d links!\n", newLinks.size());
                     linkProvider.putInDestiny(newLinks);
                 }
-                //String url = linkProvider.getFromOrigin();
-                //linkProvider.putInOrigin(url);
-                //linkProvider.putInDestiny(null);
             }
         }
     }
