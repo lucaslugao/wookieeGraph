@@ -1,4 +1,3 @@
-
 /**
  * Created by Lucas on 2/24/2017.
  */
@@ -80,7 +79,7 @@ public class Crawler implements Runnable {
                 if (maxRetry == 0) {
                     linkProvider.putInOrigin(url);
                 } else {
-                    linkProvider.putInDestiny(newLinks);
+                    linkProvider.putInDestiny(url, newLinks);
                 }
             }
         }

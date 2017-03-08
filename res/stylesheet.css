@@ -1,0 +1,251 @@
+graph {
+    fill-color: #000;
+    fill-mode: image-tiled;
+    fill-image: url("res/sky2.jpg");
+}
+edge {
+    z-index: 1;
+}
+edge.Level0 {
+    fill-color: #7e2227;
+}
+
+edge.Level1 {
+    fill-color: #2e4b79;
+}
+
+node {
+    fill-color: #ffffff;
+    size: 1px;
+    text-mode: normal;
+    text-visibility-mode: under-zoom;
+    text-visibility: 0.25;
+    text-color: #FFF;
+    z-index: 2;
+}
+
+
+node#"Yoda" {
+    size: 64px;
+    fill-mode: image-scaled;
+    fill-image: url("res/yoda.png");
+    z-index: 15;
+}
+node#"BB-8" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/bb8.png");
+    z-index: 10;
+}
+node#"Darth Maul" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/darth-maul.png");
+    z-index: 10;
+}
+node#"Phasma" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/captain-phasma.png");
+    z-index: 10;
+}
+
+node#"Leia Organa Solo" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/princess-leia.png");
+    z-index: 10;
+}
+node#"Boba Fett" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/boba-fett.png");
+    z-index: 10;
+}
+
+node#"Anakin Skywalker" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/darth-vader.png");
+    z-index: 10;
+}
+
+node#"R2-D2" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/r2d2.png");
+    z-index: 10;
+}
+node#"Maz Kanata" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/maz-kanata.png");
+    z-index: 10;
+}
+node#"Red Five" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/red-five.png");
+    z-index: 10;
+}
+node#"Rey" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/rey.png");
+    z-index: 10;
+}
+node#"Tusken Raider" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/tusken-raider.png");
+    z-index: 10;
+}
+node#"Qui-Gon Jinn" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/qui-gon-jinn.png");
+    z-index: 10;
+}
+node#"Qui-Gon Jinn" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/qui-gon-jinn.png");
+    z-index: 10;
+}
+node#"Poe Dameron" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/poe-dameron.png");
+    z-index: 10;
+}
+node#"Obi-Wan Kenobi" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/obiwan-kenobi.png");
+    z-index: 10;
+}
+node#"Maz Kanata" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/maz-kanata.png");
+    z-index: 10;
+}
+node#"Lando Calrissian" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/lando-calrissian.png");
+    z-index: 10;
+}
+
+node#"Chewbacca" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/chewbacca.png");
+    z-index: 10;
+}
+
+node#"C-3PO" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/c3po.png");
+    z-index: 10;
+}
+node#"Han Solo" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/han-solo.png");
+    z-index: 10;
+}
+node#"Gial_Ackbar" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/admiral-ackbar.png");
+    z-index: 10;
+}
+
+node#"Revan" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/revan.png");
+    z-index: 10;
+}
+
+node#"Greedo" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/greedo.png");
+    z-index: 10;
+}
+node#"Luke Skywalker" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/luke-skywalker.png");
+    z-index: 10;
+}
+node#"Het Nkik" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/jawa.png");
+    z-index: 10;
+}
+node#"Kekit" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/jawa.png");
+    z-index: 10;
+}
+node#"Greedo" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/greedo.png");
+    z-index: 10;
+}
+node#"Armitage Hux" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/general-hux.png");
+    z-index: 10;
+}
+node#"Jango Fett" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/jango-fett.png");
+    z-index: 10;
+}
+
+node#"Ewok" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/ewok.png");
+    z-index: 10;
+}
+node#"Finn" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/finn.png");
+    z-index: 10;
+}
+node#"Palpatine" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/emperor-palpatine.png");
+    z-index: 10;
+}
+node#"Kylo Ren" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/kylo-ren.png");
+    z-index: 10;
+}
+node#"Jabba Desilijic Tiure" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/jabba-the-hutt.png");
+    z-index: 10;
+}
+node#"Lobot" {
+    size: 32px;
+    fill-mode: image-scaled;
+    fill-image: url("res/lobot.png");
+    z-index: 10;
+}

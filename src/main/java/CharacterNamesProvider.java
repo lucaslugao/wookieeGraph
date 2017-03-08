@@ -79,7 +79,7 @@ public class CharacterNamesProvider {
             if (restartParse) {
                 System.out.println("Connection error! Retrying " + Integer.toString(maxRetry) + " more times.");
             }
-            System.out.printf("%.2f%%\n", 100.0*names.size()/28775);
+            System.out.printf("%.2f%%\n", 100.0 * names.size() / 28775);
         }
         System.out.printf("%d character names downloaded.\n", names.size());
         return names;

@@ -1,10 +1,3 @@
-
-import org.apache.http.client.fluent.Executor;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,16 +10,19 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Lucas on 2/24/2017.
  */
-public class Manager implements BFSManager {
+public class Manager {
     private final Set<String> characterNames;
     private final LinkProvider linkProvider;
     private final StringBuilder solutionLines;
     private final int maxDepth;
     private final int poolSize;
+    private final VisualizationProvider visualization;
 
-    public Manager(String graphOrigin, int depth, int poolSize, Set<String> charNames) {
+
+    public Manager(String graphOrigin, int depth, int poolSize, Set<String> charNames, VisualizationProvider visualization) {
+        this.visualization = visualization;
         this.solutionLines = new StringBuilder();
-        this.linkProvider = new LinkProvider(poolSize);
+        this.linkProvider = new LinkProvider(poolSize, this.visualization);
         this.maxDepth = depth;
         this.poolSize = poolSize;
         this.linkProvider.putInOrigin(graphOrigin);
@@ -35,6 +31,7 @@ public class Manager implements BFSManager {
     }
 
     public void Crawl() {
+
         Thread threads[] = new Thread[poolSize];
 
         Thread reporter = new Thread(() -> {
@@ -47,8 +44,8 @@ public class Manager implements BFSManager {
                 }
             }
         });
-
         reporter.start();
+
 
         for (int i = 0; i < poolSize; i++) {
             threads[i] = new Thread(new Crawler(linkProvider, characterNames), "Crawler #" + Integer.toString(i));
@@ -79,6 +76,7 @@ public class Manager implements BFSManager {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
     }
 
     private void appendToSolution(List<String> partialSolution, int depth) {

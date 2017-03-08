@@ -3,9 +3,11 @@
  */
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashSet;
-import java.util.concurrent.locks.*;
+import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class LinkProvider {
 
@@ -25,7 +27,11 @@ public class LinkProvider {
 
     private boolean isStopped = false;
 
-    public LinkProvider(int nThreads) {
+
+    private final VisualizationProvider visualization;
+    private int counter = 0;
+
+    public LinkProvider(int nThreads, VisualizationProvider visualization) {
         this.origin = new ArrayList<>();
         this.destiny = new ArrayList<>();
 
@@ -39,6 +45,8 @@ public class LinkProvider {
         this.stepOver = originLock.newCondition();
 
         this.visited = new HashSet<>();
+
+        this.visualization = visualization;
     }
 
     public String getFromOrigin() {
@@ -93,13 +101,15 @@ public class LinkProvider {
         }
     }
 
-    public void putInDestiny(List<String> list) {
+    public void putInDestiny(String origin, List<String> list) {
         destinyLock.lock();
         try {
             for (String s : list) {
                 if (!visited.contains(s)) { // We just add new items to the destiny queue
                     visited.add(s);
                     destiny.add(s);
+                    if (visualization != null)
+                        visualization.addEdge(origin, s, "Level" + Integer.toString(counter % 2));
                 }
             }
         } finally {
@@ -108,6 +118,7 @@ public class LinkProvider {
     }
 
     public ArrayList<String> swapAndDrain() {
+
         originLock.lock();
         try {
             while (origin.size() > 0 || waitingWorkers < nThreads) {// If the origin queue is not empty, the step is not over
@@ -123,6 +134,7 @@ public class LinkProvider {
                 notEmpty.signalAll();
 
                 // Returning partial solution
+                counter++;
                 return new ArrayList<>(origin);
 
             } finally {
@@ -139,8 +151,7 @@ public class LinkProvider {
         destinyLock.lock();
         try {
             System.out.printf("OriginSize: %6d | DestinySize: %6d | WaitingWorkers: %3d | PagesVisited: %6d\n", origin.size(), destiny.size(), waitingWorkers, visited.size());
-        }
-        finally {
+        } finally {
             destinyLock.unlock();
             originLock.unlock();
         }
