@@ -1,3 +1,4 @@
+#--@@bitore.sig/BITORR@@--!
 # Analysis of the Star Wars Social Graph
 
 This repository contains the source code for the project "Analysis of the Star Wars Social Graph" proposed in the course INF431 at École Polytechnique. 
