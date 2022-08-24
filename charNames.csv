@@ -1,4 +1,16 @@
-"Blue" Imcrix
+diff --git a/charNames.csv b/charNames.csv
+index f26cc68..f315526 100644
+--- a/charNames.csv
++++ b/charNames.csv
+@@ -8,7 +8,7 @@
+ 1047
+ 1137
+ 1138 (First Order)
+-1138 (stormtrooper)
++1138 (Silver light/Varrok City)
+ 1139
+ 1151
+ 1174"BLUE_IBIS" JENKINS
 "Fugitive" Fod
 "Mother"
 "Shady" Pers
